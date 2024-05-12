@@ -12,10 +12,6 @@ export class UsersService {
         @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
         private jwtService: JwtService,
     ){}
-    async findByEmail(useremail: string): Promise<UserDocument | null> {
-        console.log("again"+useremail)
-        return this.userModel.findOne({ useremail }).exec();
-    }
     async CreateUser(user: User): Promise<UserResponse> {
         // check validation of Userdata
 

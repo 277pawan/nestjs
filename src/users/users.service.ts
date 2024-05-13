@@ -12,6 +12,16 @@ export class UsersService {
         @InjectModel(User.name) private readonly userModel: Model<UserDocument>,
         private jwtService: JwtService,
     ){}
+        async CheckerEmail(useremail:string):Promise<any>{
+            const user=await this.userModel.findOne({useremail:useremail});
+            if(user)
+                {
+             return user;
+        }
+        return null;
+        }
+    
+    
     async CreateUser(user: User): Promise<UserResponse> {
         // check validation of Userdata
 
@@ -47,6 +57,15 @@ export class UsersService {
         const user=await this.validateUser(LoginDto.useremail,LoginDto.userpassword)
         if (!user) {
             throw new UnauthorizedException('Invalid credentials(Email and Password)');
+        }
+        const token = this.jwtService.sign({ userId: user._id });
+        return {message:"Login Successfull",user:user.toObject(),token:token };
+    
+    }
+    async googlelogin(LoginDto:LoginDto):Promise<UserResponse>{
+        const user=await this.CheckerEmail(LoginDto.useremail)
+        if (!user) {
+            throw new UnauthorizedException('Invalid credentials.');
         }
         const token = this.jwtService.sign({ userId: user._id });
         return {message:"Login Successfull",user:user.toObject(),token:token };
